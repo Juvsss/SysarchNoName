@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login - Student Attendance</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="page-auth">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="brand">
+        <div class="logo">GRC</div>
+        <div class="brand-text">
+          <div class="title">Global Reciprocal Colleges</div>
+          <div class="subtitle">Student Attendance</div>
+        </div>
+      </div>
+
+      <form id="loginForm" class="form">
+        <h2>Sign In</h2>
+        <div class="form-row"><label>Username</label><input id="loginUser" autocomplete="username"></div>
+        <div class="form-row"><label>Password</label><input id="loginPass" type="password" autocomplete="current-password"></div>
+        <div class="form-row actions">
+          <button type="button" id="loginBtn" class="btn primary">Login</button>
+          <a class="link" href="register.html">Create account</a>
+        </div>
+        <div class="muted">Default admin: <strong>admin</strong> / <strong>Admin@123!</strong></div>
+      </form>
+    </div>
+  </div>
+
+  <script src="db.js"></script>
+  <script src="app.js"></script>
+  <script>
+    // auto-focus
+    document.getElementById('loginUser').focus();
+  </script>
+</body>
+</html>

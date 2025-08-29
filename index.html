@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard - Student Attendance</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo small">GRC</div>
+        <div>
+          <div class="title">Student Attendance</div>
+          <div class="muted small">Global Reciprocal Colleges</div>
+        </div>
+      </div>
+      <div class="right">
+        <div id="loggedAs" class="muted">Not logged in</div>
+        <button id="logoutBtn" class="btn secondary" style="display:none">Logout</button>
+      </div>
+    </header>
+
+    <div id="dashboard" style="display:none">
+      <div class="tabs">
+        <button class="tabBtn active" data-tab="studentsTab">Students</button>
+        <button class="tabBtn" data-tab="dbTab">Database UI</button>
+      </div>
+
+      <div id="studentsTab" class="tab card">
+        <div class="toolbar">
+          <div class="tag" id="userRoleTag">Role</div>
+          <div style="margin-left:auto;display:flex;gap:8px">
+            <button id="openAddStudent" class="btn primary">+ Add Student</button>
+            <button id="openCreateClass" class="btn secondary">+ Create Class</button>
+          </div>
+        </div>
+
+        <div class="controls">
+          <input id="searchInput" class="search" placeholder="Search by ID or last name">
+          <select id="filterClass"><option value="">All classes</option></select>
+          <button id="clearFilter" class="btn secondary">Clear</button>
+          <input id="importCsvFile" type="file" accept=".csv" style="display:none" />
+          <button id="importCsvBtn" class="btn secondary">Import CSV</button>
+        </div>
+
+        <table id="studentsTable">
+          <thead><tr><th>ID</th><th>Name</th><th>Class</th><th>Teacher</th><th>Actions</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div id="dbTab" class="tab card" style="display:none">
+        <h3>Database UI</h3>
+        <p class="muted small">Raw tables stored in your browser (localStorage)</p>
+        <div id="dbContent" class="dbcontent"></div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button id="exportJsonBtn" class="btn secondary">Export JSON</button>
+          <button id="exportCsvBtn" class="btn secondary">Export Students CSV</button>
+          <button id="clearDBBtn" class="btn secondary">Clear Database</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- modal -->
+  <div id="modal" class="modal-back"><div class="modal card" id="modalContent"></div></div>
+
+  <script src="db.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

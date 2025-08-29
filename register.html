@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Register - Student Attendance</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="page-auth">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="brand">
+        <div class="logo">GRC</div>
+        <div class="brand-text">
+          <div class="title">Global Reciprocal Colleges</div>
+          <div class="subtitle">Create an account</div>
+        </div>
+      </div>
+
+      <form id="regForm" class="form">
+        <h2>Register</h2>
+        <div class="form-row"><label>Username</label><input id="regUser" autocomplete="username"></div>
+        <div class="form-row"><label>Full name</label><input id="regName"></div>
+        <div class="form-row"><label>Role</label>
+          <select id="regRole"><option>Teacher</option><option>Admin</option></select>
+        </div>
+        <div class="form-row"><label>Email</label><input id="regEmail" type="email" autocomplete="email"></div>
+        <div class="form-row"><label>Password</label><input id="regPass" type="password" autocomplete="new-password"></div>
+        <div class="form-row"><label>Confirm Password</label><input id="regPass2" type="password"></div>
+        <div class="form-row actions">
+          <button type="button" id="regBtn" class="btn primary">Register</button>
+          <a class="link" href="login.html">Back to login</a>
+        </div>
+        <div id="regFeedback" class="muted small"></div>
+      </form>
+    </div>
+  </div>
+
+  <script src="db.js"></script>
+  <script src="app.js"></script>
+  <script>
+    // simple live feedback for password strength
+    const pw = document.getElementById('regPass');
+    const fb = document.getElementById('regFeedback');
+    pw && pw.addEventListener('input', ()=>{
+      const v = pw.value;
+      const ok = /^(?=.{8,16}$)(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).*$/.test(v);
+      fb.textContent = ok ? 'Password looks good.' : 'Password must be 8–16 chars, include upper & lower case, number and special char.';
+    });
+  </script>
+</body>
+</html>
