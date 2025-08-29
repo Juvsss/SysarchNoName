@@ -98,7 +98,22 @@ function onLogin(){
   updateStudentsTable();
   populateClassFilter();
   DBUI.render();
+
+  // ---- Show/hide buttons based on role ----
+  if(currentUser.role === 'Student'){
+    $('openAddStudent').style.display = 'none';
+    $('openCreateClass').style.display = 'none';
+  } else if(currentUser.role === 'Teacher'){
+    $('openAddStudent').style.display = 'inline-block';
+    $('openCreateClass').style.display = 'none';
+  } else if(currentUser.role === 'Admin'){
+    $('openAddStudent').style.display = 'none';
+    $('openCreateClass').style.display = 'inline-block';
+  }
 }
+
+
+
 
 function updateStudentsTable(filter=''){
   const tbody = $('studentsTable').querySelector('tbody');
@@ -106,23 +121,93 @@ function updateStudentsTable(filter=''){
   let students = DB.students();
   const classFilter = $('filterClass').value;
   if(classFilter) students = students.filter(s=>s.classId===classFilter);
-  if(filter){ const q=filter.toLowerCase(); students = students.filter(s=> s.id.toLowerCase().includes(q) || s.lastName.toLowerCase().includes(q) ); }
-  if(!students.length){ tbody.innerHTML = `<tr><td colspan="5" class="muted small">No students</td></tr>`; return; }
+  if(filter){ 
+    const q=filter.toLowerCase(); 
+    students = students.filter(s=> s.id.toLowerCase().includes(q) || s.lastName.toLowerCase().includes(q) ); 
+  }
+  if(!students.length){ 
+    tbody.innerHTML = `<tr><td colspan="6" class="muted small">No students</td></tr>`; 
+    return; 
+  }
   const classes = DB.classes();
   students.forEach(s=>{
     const cls = classes.find(c=>c.id===s.classId);
+
+    if(!s.attendance) s.attendance = {status:''};
+
+    // Attendance column
+    let attCol = '';
+    if(currentUser.role==='Teacher'){
+      attCol = `
+        <button data-id="${s.id}" data-status="Present" class="btn success attBtn">✔</button>
+        <button data-id="${s.id}" data-status="Absent" class="btn danger attBtn">✖</button>
+      `;
+    } else {
+      // Student or Admin sees only badge/text
+      attCol = `<span class="badge ${s.attendance.status==='Present'?'green':'red'}">${s.attendance.status||'—'}</span>`;
+    }
+
+    // Action buttons
+    let actionCol = '';
+    if(currentUser.role==='Teacher' || currentUser.role==='Admin'){
+      actionCol = `<div style="display:flex;gap:6px">
+                     <button data-id="${s.id}" class="btn secondary editBtn">Edit</button>
+                     <button data-id="${s.id}" class="btn secondary delBtn">Delete</button>
+                   </div>`;
+    }
+
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${s.id}</td><td>${s.lastName}, ${s.firstName}</td><td>${cls?cls.name:''}</td><td>${cls?cls.teacher:''}</td>
-      <td><div style="display:flex;gap:6px"><button data-id="${s.id}" class="btn secondary editBtn">Edit</button><button data-id="${s.id}" class="btn secondary delBtn">Delete</button></div></td>`;
+    tr.innerHTML = `
+      <td>${s.id}</td>
+      <td>${s.lastName}, ${s.firstName}</td>
+      <td>${cls?cls.name:''}</td>
+      <td>${cls?cls.teacher:''}</td>
+      <td>${attCol}</td>
+      <td>${actionCol}</td>
+    `;
     tbody.appendChild(tr);
   });
-  tbody.querySelectorAll('.editBtn').forEach(b=> b.addEventListener('click', e=> openEditStudent(e.target.dataset.id) ));
-  tbody.querySelectorAll('.delBtn').forEach(b=> b.addEventListener('click', e=> deleteStudent(e.target.dataset.id) ));
-  // role-based
-  if(currentUser.role!=='Admin' && currentUser.role!=='Teacher'){
-    tbody.querySelectorAll('button').forEach(b=> b.style.display='none');
+
+  // Attendance button events (Teachers only)
+  if(currentUser.role==='Teacher'){
+    tbody.querySelectorAll('.attBtn').forEach(b=>{
+      b.addEventListener('click', e=>{
+        const id = e.target.dataset.id;
+        const status = e.target.dataset.status;
+        const students = DB.students();
+        const s = students.find(st=>st.id===id);
+        if(s){
+          s.attendance = {status};
+          DB.saveStudents(students);
+          updateStudentsTable(filter);
+        }
+      });
+    });
+  }
+
+  // Edit/Delete events (Teachers/Admin only)
+  if(currentUser.role==='Teacher' || currentUser.role==='Admin'){
+    tbody.querySelectorAll('.editBtn').forEach(b=> 
+      b.addEventListener('click', e=> openEditStudent(e.target.dataset.id))
+    );
+    tbody.querySelectorAll('.delBtn').forEach(b=> 
+      b.addEventListener('click', e=> deleteStudent(e.target.dataset.id))
+    );
+  }
+
+  // Attendance summary (Teacher/Admin)
+  if(currentUser.role === 'Teacher' || currentUser.role === 'Admin'){
+    let present = students.filter(s => s.attendance?.status === 'Present').length;
+    let absent = students.filter(s => s.attendance?.status === 'Absent').length;
+    $('presentCount').innerText = present;
+    $('absentCount').innerText = absent;
+    $('attendanceSummary').style.display = 'flex';
+  } else {
+    $('attendanceSummary').style.display = 'none';
   }
 }
+
+
 
 function openAddStudent(){
   const classes = DB.classes();

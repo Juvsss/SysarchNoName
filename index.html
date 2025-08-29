@@ -1,4 +1,4 @@
-<!doctype html>
+<!doctype html> 
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -45,10 +45,28 @@
           <button id="importCsvBtn" class="btn secondary">Import CSV</button>
         </div>
 
+        <!-- FIXED TABLE -->
         <table id="studentsTable">
-          <thead><tr><th>ID</th><th>Name</th><th>Class</th><th>Teacher</th><th>Actions</th></tr></thead>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Class</th>
+              <th>Teacher</th>
+              <th>Attendance</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
           <tbody></tbody>
         </table>
+
+        <!-- Attendance Summary -->
+        <div id="attendanceSummary" class="controls" style="margin-top:16px; display:none">
+          <span class="tag">Present: <strong id="presentCount">0</strong></span>
+          <span class="tag" style="background:#fee2e2;color:#b91c1c">
+            Absent: <strong id="absentCount">0</strong>
+          </span>
+        </div>
       </div>
 
       <div id="dbTab" class="tab card" style="display:none">
